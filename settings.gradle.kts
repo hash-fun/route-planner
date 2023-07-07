@@ -1,4 +1,4 @@
-rootProject.name = "do"
+rootProject.name = "geo"
 
 pluginManagement {
     repositories {
