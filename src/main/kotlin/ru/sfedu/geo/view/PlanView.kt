@@ -10,6 +10,7 @@ import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.dataview.GridListDataView
 import com.vaadin.flow.component.grid.dnd.GridDropLocation
 import com.vaadin.flow.component.grid.dnd.GridDropMode
+import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
@@ -17,18 +18,25 @@ import com.vaadin.flow.router.BeforeEvent
 import com.vaadin.flow.router.HasUrlParameter
 import com.vaadin.flow.router.Route
 import ru.sfedu.geo.model.Order
+import ru.sfedu.geo.service.ErpAdapter
 import ru.sfedu.geo.service.OrderService
+import ru.sfedu.geo.service.PlanService
 import ru.sfedu.geo.util.lazyLogger
+import java.time.LocalDate
 import java.util.UUID
+import kotlin.streams.asSequence
 
 
 @Route(value = "plan")
 class PlanView(
+    private val planService: PlanService,
     private val orderService: OrderService,
+    private val erpAdapter: ErpAdapter,
 ) : VerticalLayout(), HasUrlParameter<String> {
     private val log by lazyLogger()
 
     private lateinit var planId: UUID
+    private lateinit var deliveryDate: LocalDate
     private lateinit var dataView: GridListDataView<Order>
 
     private var draggedItem: Order? = null
@@ -96,9 +104,27 @@ class PlanView(
     }
 
     private val getOrdersButton = Button("Get Orders") {
-        // TODO
-        // orderService.receiveOrders
-        // dataView.addItems()
+        val newOrders = erpAdapter.fetchOrdersByDeliveryDate(deliveryDate)
+        val ids = dataView.items.asSequence().map(Order::id).toSet()
+        val filtered = newOrders.filterNot { it.id in ids }.map { it.copy(planId = planId) }
+        when {
+            filtered.isEmpty() -> Notification.show("Новых заказоа нет").apply {
+                position = Notification.Position.BOTTOM_CENTER
+            }.also {
+                log.debug("fetchOrders: no new orders fetched")
+            }
+
+            else -> dataView.addItems(filtered).also {
+                log.debug("fetchOrders: ")
+                Notification.show("${filtered.size} новых заказов получено").apply {
+                    position = Notification.Position.BOTTOM_CENTER
+                }.also {
+                    log.debug("fetchOrders: new orders fetched={}", filtered)
+                }
+
+            }
+        }
+
     }.apply {
         addThemeVariants(LUMO_PRIMARY)
         addClickShortcut(Key.ENTER)
@@ -136,8 +162,9 @@ class PlanView(
     override fun setParameter(event: BeforeEvent, parameter: String) {
         log.debug("setParameter: event: {}, parameter: {}", event, parameter)
         planId = UUID.fromString(parameter)
-        orderService.findByPlanId(planId).let {
+        orderService.findByPlanId(planId).toMutableList().let {
             dataView = grid.setItems(it)
         }
+        deliveryDate = planService.getById(planId).deliveryDate
     }
 }

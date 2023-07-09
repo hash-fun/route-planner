@@ -8,6 +8,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
+import java.time.LocalDate
 import java.util.UUID
 import javax.annotation.processing.Generated
 
@@ -33,6 +34,9 @@ data class Order(
 
     @field:Column(nullable = false, length = ADDRESS_SIZE)
     val address: String? = null,
+
+    @field:Column(name = "delivery_date", nullable = false)
+    val deliveryDate: LocalDate? = null,
 
     @field:JsonIgnore
     @field:Column(name = "plan_id", nullable = false)

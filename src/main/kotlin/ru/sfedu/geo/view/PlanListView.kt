@@ -46,7 +46,7 @@ class PlanListView(
             val date = datePicker.value
             when (val plan = planService.findByDeliverDate(date)) {
                 null -> Notification.show("Plan not found for date: $date").apply {
-                    position = Notification.Position.BOTTOM_END
+                    position = Notification.Position.BOTTOM_CENTER
                 }.also {
                     log.debug("openPlan: plan not found for date={}", date)
                 }
@@ -83,7 +83,7 @@ class PlanListView(
                     planService.findByDeliverDate(date)
                 }) {
                     null -> Notification.show("Can't create or get existing plan for date: $date").apply {
-                        position = Notification.Position.BOTTOM_END
+                        position = Notification.Position.BOTTOM_CENTER
                     }.also {
                         log.debug("create: plan not found for date={}", date)
                     }

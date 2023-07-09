@@ -33,4 +33,6 @@ class PlanService(
                 deliveryDate = date,
             )
         )
+
+    fun getById(planId: UUID) = planRepository.getReferenceById(planId)
 }
