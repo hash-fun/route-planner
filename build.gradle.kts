@@ -6,7 +6,7 @@ plugins {
     id("com.vaadin") version "24.1.2"
     kotlin("jvm") version "1.7.10"
     kotlin("plugin.spring") version "1.7.10"
-    // kotlin("plugin.jpa") version "1.7.10"
+    kotlin("plugin.jpa") version "1.7.10"
 }
 
 group = "ru.sfedu.geo"
@@ -41,14 +41,16 @@ dependencyManagement {
 dependencies {
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
 
     implementation("com.vaadin:vaadin-spring-boot-starter")
-    // implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     // implementation("org.springframework.boot:spring-boot-starter-web")
-
-
-
 
     runtimeOnly("com.h2database:h2")
 

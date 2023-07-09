@@ -16,14 +16,13 @@ import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.router.Route
 import ru.sfedu.geo.model.Order
 import ru.sfedu.geo.service.OrderService
-import java.util.UUID
 
 
 /**
  * The main view contains a button and a click listener.
  */
-@Route("")
-class MainView(
+@Route("plan")
+class PlanView(
     private val orderService: OrderService,
 ) : VerticalLayout() {
     private var draggedItem: Order? = null
@@ -61,8 +60,8 @@ class MainView(
     }
 
     private val newOrderDialog = Dialog().apply {
-        val name = TextField("Name");
-        val address = TextField("Address");
+        val name = TextField("Name")
+        val address = TextField("Address")
         headerTitle = "New Order"
         add(VerticalLayout().apply {
             add(name, address)
@@ -70,7 +69,12 @@ class MainView(
         footer.add(Button("Cancel") { close() })
         footer.add(Button("Save") {
 
-            dataView.addItem(Order(UUID.randomUUID(), name.value, address.value))
+            dataView.addItem(
+                Order(
+                    name = name.value,
+                    address = address.value
+                )
+            )
 
             close()
         }.apply {
@@ -107,7 +111,6 @@ class MainView(
     private val dataView: GridListDataView<Order> = grid.setItems(mutableListOf())
 
     init {
-        // Use custom CSS classes to apply styling. This is defined in shared-styles.css.
         addClassName("centered-content")
         add(
             grid,
