@@ -44,8 +44,8 @@ class PlanView(
     private val grid = Grid(Order::class.java, false).apply {
         // columns
         addColumn(Order::id).setHeader("ID")
-        addColumn(Order::name).setHeader("Name")
-        addColumn(Order::address).setHeader("Address")
+        addColumn(Order::name).setHeader("Номер")
+        addColumn(Order::address).setHeader("Адрес")
 
         // drag-n-drop
         dropMode = GridDropMode.BETWEEN
@@ -74,9 +74,9 @@ class PlanView(
     }
 
     private val newOrderDialog = Dialog().apply {
-        val nameTextField = TextField("Name")
-        val addressTextField = TextField("Address")
-        headerTitle = "New Order"
+        val nameTextField = TextField("Номер/Название")
+        val addressTextField = TextField("Адрес")
+        headerTitle = "Новый заказ"
         add(VerticalLayout().apply {
             add(nameTextField, addressTextField)
         })
@@ -103,7 +103,7 @@ class PlanView(
         })
     }
 
-    private val getOrdersButton = Button("Get Orders") {
+    private val getOrdersButton = Button("Получить Заказы") {
         val newOrders = erpAdapter.fetchOrdersByDeliveryDate(deliveryDate)
         val ids = dataView.items.asSequence().map(Order::id).toSet()
         val filtered = newOrders.filterNot { it.id in ids }.map { it.copy(planId = planId) }
@@ -130,13 +130,13 @@ class PlanView(
         addClickShortcut(Key.ENTER)
     }
 
-    private val newOrder = Button("New Order") {
+    private val newOrder = Button("Новый Заказ") {
         newOrderDialog.open()
     }.apply {
         addThemeVariants(LUMO_PRIMARY, LUMO_SUCCESS)
     }
 
-    private val saveButton = Button("Save") {
+    private val saveButton = Button("Сохранить") {
         orderService.save(dataView.items).sortedBy { it.number }.let {
             dataView = grid.setItems(it)
         }
@@ -144,10 +144,17 @@ class PlanView(
         addThemeVariants(LUMO_PRIMARY, LUMO_ERROR)
     }
 
+    private val printButton = Button("Печать") {
+        ui.ifPresent {
+            it.navigate(PdfView::class.java, planId.toString())
+        }
+    }
+
     private val buttonBar = HorizontalLayout().apply {
         add(getOrdersButton)
         add(newOrder)
         add(saveButton)
+        add(printButton)
     }
 
     init {

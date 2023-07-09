@@ -41,6 +41,7 @@ dependencyManagement {
 dependencies {
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
+    // kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -48,9 +49,16 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
 
+    // vaadin
     implementation("com.vaadin:vaadin-spring-boot-starter")
+    implementation("org.vaadin.addons.componentfactory:vcf-pdf-viewer:2.7.2")
+
+    // jasper
+    // implementation("net.sf.jasperreports:jasperreports:6.20.0")
+    // implementation("net.sf.jasperreports:jasperreports-fonts:6.20.0")
+
+    // data
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    // implementation("org.springframework.boot:spring-boot-starter-web")
 
     runtimeOnly("com.h2database:h2")
 

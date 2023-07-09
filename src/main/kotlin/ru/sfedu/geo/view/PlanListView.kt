@@ -29,7 +29,7 @@ class PlanListView(
     private val grid = Grid(Plan::class.java, false).apply {
         // columns
         addColumn(Plan::id).setHeader("ID")
-        addColumn(Plan::deliveryDate).setHeader("Delivery Date")
+        addColumn(Plan::deliveryDate).setHeader("Дата Доставки")
 
         // events
         addItemDoubleClickListener {
@@ -39,7 +39,7 @@ class PlanListView(
 
     private val openPlanDialog = Dialog().apply {
         val datePicker = DatePicker("Date:")
-        headerTitle = "Open Plan"
+        headerTitle = "Открыть план"
         add(datePicker)
         footer.add(Button("Cancel") { close() })
         footer.add(Button("Open") {
@@ -68,7 +68,7 @@ class PlanListView(
 
     private val createPlanDialog = Dialog().apply {
         val datePicker = DatePicker("Date:")
-        headerTitle = "Create Plan"
+        headerTitle = "Создать план"
         add(datePicker)
         footer.add(Button("Cancel") { close() })
         footer.add(Button("Create") {
@@ -103,14 +103,14 @@ class PlanListView(
         })
     }
 
-    private val openPlanButton = Button("Open Plan ...") {
+    private val openPlanButton = Button("Открыть план ...") {
         openPlanDialog.open()
     }.apply {
         addThemeVariants(LUMO_PRIMARY)
         addClickShortcut(Key.ENTER)
     }
 
-    private val createPlanButton = Button("Create Plan ...") {
+    private val createPlanButton = Button("Создать план ...") {
         createPlanDialog.open()
     }.apply {
         addThemeVariants(LUMO_PRIMARY, LUMO_SUCCESS)
