@@ -16,8 +16,8 @@ import javax.annotation.processing.Generated
     name = "orders",
     uniqueConstraints = [
         UniqueConstraint(
-            name = "order_number_ux",
-            columnNames = ["plan_id", "number"]
+            name = "order_ux",
+            columnNames = ["id", "plan_id"]
         )
     ]
 )
