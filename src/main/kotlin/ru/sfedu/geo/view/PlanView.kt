@@ -66,25 +66,32 @@ class PlanView(
     }
 
     private val newOrderDialog = Dialog().apply {
-        val name = TextField("Name")
-        val address = TextField("Address")
+        val nameTextField = TextField("Name")
+        val addressTextField = TextField("Address")
         headerTitle = "New Order"
         add(VerticalLayout().apply {
-            add(name, address)
+            add(nameTextField, addressTextField)
         })
         footer.add(Button("Cancel") { close() })
         footer.add(Button("Save") {
 
             dataView.addItem(
                 Order(
-                    name = name.value,
-                    address = address.value
+                    name = nameTextField.value,
+                    address = addressTextField.value,
+                    planId = planId
                 )
             )
 
             close()
         }.apply {
             addThemeVariants(LUMO_PRIMARY)
+            addOpenedChangeListener {
+                if (isOpened) {
+                    nameTextField.clear()
+                    addressTextField.clear()
+                }
+            }
         })
     }
 
