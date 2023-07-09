@@ -6,6 +6,7 @@ import ru.sfedu.geo.model.Plan
 import ru.sfedu.geo.repository.PlanRepository
 import java.time.Clock
 import java.time.LocalDate
+import java.util.UUID
 
 @Service
 class PlanService(
@@ -20,6 +21,16 @@ class PlanService(
         planRepository.findByDeliveryDateBetween(
             minusDays(appProperties.daysBack.toLong()),
             plusDays(appProperties.daysForward.toLong())
-        )
+        ).sortedBy {
+            it.deliveryDate
+        }
     }
+
+    fun createPlan(date: LocalDate) =
+        planRepository.save(
+            Plan(
+                id = UUID.randomUUID(),
+                deliveryDate = date,
+            )
+        )
 }
