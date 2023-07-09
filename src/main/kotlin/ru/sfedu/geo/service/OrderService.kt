@@ -2,16 +2,24 @@ package ru.sfedu.geo.service
 
 import org.springframework.stereotype.Service
 import ru.sfedu.geo.model.Order
-import java.time.Instant
+import ru.sfedu.geo.repository.OrderRepository
+import java.util.UUID
+import java.util.stream.Stream
+import kotlin.streams.asSequence
 
 @Service
-class OrderService {
-    fun foo(): String = Instant.now().toString()
+class OrderService(
+    private val orderRepository: OrderRepository,
+) {
+    fun findByPlanId(planId: UUID) =
+        orderRepository.findByPlanIdOrderByNumber(planId)
 
-    fun getOrders() = (1..2).map {
-        Order(
-            name = "Test Order # $it",
-            address = "Москва, Кремль, $it"
-        )
-    }
+    fun save(orderStream: Stream<Order>): List<Order> =
+        orderStream.asSequence().mapIndexed { index, order ->
+            order.apply {
+                number = index + 1
+            }
+        }.toList().let {
+            orderRepository.saveAll(it)
+        }
 }

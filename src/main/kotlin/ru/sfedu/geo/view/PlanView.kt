@@ -13,18 +13,24 @@ import com.vaadin.flow.component.grid.dnd.GridDropMode
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.flow.router.BeforeEvent
+import com.vaadin.flow.router.HasUrlParameter
 import com.vaadin.flow.router.Route
 import ru.sfedu.geo.model.Order
 import ru.sfedu.geo.service.OrderService
+import ru.sfedu.geo.util.lazyLogger
+import java.util.UUID
 
 
-/**
- * The main view contains a button and a click listener.
- */
-@Route("plan")
+@Route(value = "plan")
 class PlanView(
     private val orderService: OrderService,
-) : VerticalLayout() {
+) : VerticalLayout(), HasUrlParameter<String> {
+    private val log by lazyLogger()
+
+    private lateinit var planId: UUID
+    private lateinit var dataView: GridListDataView<Order>
+
     private var draggedItem: Order? = null
 
     private val grid = Grid(Order::class.java, false).apply {
@@ -83,7 +89,9 @@ class PlanView(
     }
 
     private val getOrdersButton = Button("Get Orders") {
-        dataView.addItems(orderService.getOrders())
+        // TODO
+        // orderService.receiveOrders
+        // dataView.addItems()
     }.apply {
         addThemeVariants(LUMO_PRIMARY)
         addClickShortcut(Key.ENTER)
@@ -95,20 +103,19 @@ class PlanView(
         addThemeVariants(LUMO_PRIMARY, LUMO_SUCCESS)
     }
 
-    private val pushButton = Button("Push Solution") {
-        it.source.text = orderService.foo()
+    private val saveButton = Button("Save") {
+        orderService.save(dataView.items).sortedBy { it.number }.let {
+            dataView = grid.setItems(it)
+        }
     }.apply {
         addThemeVariants(LUMO_PRIMARY, LUMO_ERROR)
     }
 
-
     private val buttonBar = HorizontalLayout().apply {
         add(getOrdersButton)
         add(newOrder)
-        add(pushButton)
+        add(saveButton)
     }
-
-    private val dataView: GridListDataView<Order> = grid.setItems(mutableListOf())
 
     init {
         addClassName("centered-content")
@@ -117,5 +124,13 @@ class PlanView(
             newOrderDialog,
             buttonBar
         )
+    }
+
+    override fun setParameter(event: BeforeEvent, parameter: String) {
+        log.debug("setParameter: event: {}, parameter: {}", event, parameter)
+        planId = UUID.fromString(parameter)
+        orderService.findByPlanId(planId).let {
+            dataView = grid.setItems(it)
+        }
     }
 }

@@ -1,6 +1,15 @@
 insert into plan(id, delivery_date)
-values (random_uuid(), '2023-07-10');
-
+values (random_uuid(), now() - 4);
 insert into plan(id, delivery_date)
-values (random_uuid(), '2023-07-12');
+values (random_uuid(), now() + 1);
+insert into plan(id, delivery_date)
+values (random_uuid(), now() + 2);
+insert into plan(id, delivery_date)
+values (random_uuid(), now() + 4);
+insert into plan(id, delivery_date)
+values (random_uuid(), now() + 6);
+insert into plan(id, delivery_date)
+values (random_uuid(), now() + 8);
+insert into plan(id, delivery_date)
+values (random_uuid(), now() + 10);
 

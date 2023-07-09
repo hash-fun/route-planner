@@ -33,9 +33,7 @@ class PlanListView(
 
         // events
         addItemDoubleClickListener {
-            if (it.isFromClient) {
-                navigate(it.item)
-            }
+            navigate(it.item)
         }
     }
 
@@ -138,7 +136,7 @@ class PlanListView(
         plan: Plan,
         block: () -> Unit = { log.debug("navigate: navigated to plan={}", plan) },
     ) = ui.ifPresent {
-        it.navigate(PlanView::class.java)
+        it.navigate(PlanView::class.java, plan.id.toString())
     }.also {
         block()
     }

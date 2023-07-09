@@ -6,10 +6,21 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
+import jakarta.persistence.Table
+import jakarta.persistence.UniqueConstraint
 import java.util.UUID
 import javax.annotation.processing.Generated
 
 @Entity
+@Table(
+    name = "orders",
+    uniqueConstraints = [
+        UniqueConstraint(
+            name = "order_number_ux",
+            columnNames = ["plan_id", "number"]
+        )
+    ]
+)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Order(
@@ -21,9 +32,12 @@ data class Order(
     val name: String? = null,
 
     @field:Column(nullable = false, length = ADDRESS_SIZE)
-    val address: String,
+    val address: String? = null,
 
     @field:JsonIgnore
     @field:Column(name = "plan_id", nullable = false)
     val planId: UUID? = null,
+
+    @field:Column(nullable = false)
+    var number: Int? = null,
 )
