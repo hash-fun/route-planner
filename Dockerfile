@@ -4,7 +4,7 @@ COPY ./gradle.properties ./
 COPY ./*.kts ./
 COPY ./src ./src
 
-RUN gradle bootJar -i -x test
+RUN gradle bootJar -i -x test -Pvaadin.productionMode=true
 
 FROM openjdk:17-jdk AS app
 WORKDIR /app

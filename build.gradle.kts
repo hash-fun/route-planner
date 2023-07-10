@@ -29,6 +29,7 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven { url = uri("https://maven.vaadin.com/vaadin-addons") }
+    maven { url = uri("https://maven.vaadin.com/vaadin-prereleases") }
 }
 
 dependencyManagement {
@@ -78,6 +79,8 @@ dependencies {
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
+
+    runtimeOnly("org.springframework.boot:spring-boot-starter-tomcat")
 }
 
 tasks.withType<KotlinCompile> {
@@ -99,4 +102,8 @@ tasks {
     bootJar {
         archiveVersion.set("")
     }
+}
+
+vaadin {
+    productionMode = true
 }
