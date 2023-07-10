@@ -29,12 +29,14 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven { url = uri("https://maven.vaadin.com/vaadin-addons") }
-    // maven { url = uri("https://maven.vaadin.com/vaadin-prereleases") }
 }
 
 dependencyManagement {
     imports {
         mavenBom("com.vaadin:vaadin-bom:$vaadinVersion")
+    }
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2022.0.3")
     }
 }
 
@@ -48,6 +50,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
+    implementation("com.jayway.jsonpath:json-path:2.8.0")
 
     // vaadin
     implementation("com.vaadin:vaadin-spring-boot-starter")
@@ -59,6 +62,9 @@ dependencies {
 
     // data
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
+    // feign
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 
     runtimeOnly("com.h2database:h2")
 

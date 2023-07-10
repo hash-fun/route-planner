@@ -19,6 +19,7 @@ import com.vaadin.flow.router.HasUrlParameter
 import com.vaadin.flow.router.Route
 import ru.sfedu.geo.model.Order
 import ru.sfedu.geo.service.ErpAdapter
+import ru.sfedu.geo.service.GeoService
 import ru.sfedu.geo.service.OrderService
 import ru.sfedu.geo.service.PlanService
 import ru.sfedu.geo.util.lazyLogger
@@ -32,6 +33,7 @@ class PlanView(
     private val planService: PlanService,
     private val orderService: OrderService,
     private val erpAdapter: ErpAdapter,
+    private val geoService: GeoService,
 ) : VerticalLayout(), HasUrlParameter<String> {
     private val log by lazyLogger()
 
@@ -46,6 +48,7 @@ class PlanView(
         addColumn(Order::id).setHeader("ID")
         addColumn(Order::name).setHeader("Номер")
         addColumn(Order::address).setHeader("Адрес")
+        addColumn(Order::point).setHeader("Координаты")
 
         // drag-n-drop
         dropMode = GridDropMode.BETWEEN
@@ -150,11 +153,28 @@ class PlanView(
         }
     }
 
+    private val geoCodeButton = Button("Геокодировать заказы") {
+        dataView.items.forEach { order ->
+            order.address.takeIf { !it.isNullOrBlank() }
+                ?.let { geoService.geocode(it) }
+                ?.let { order.point = it }
+        }
+        dataView.refreshAll()
+    }
+
+    private val buildRouteButton = Button("Построить маршрут") {
+        Notification.show("Функционал будет реализован в версии 1.3")
+    }
+
     private val buttonBar = HorizontalLayout().apply {
-        add(getOrdersButton)
-        add(newOrder)
-        add(saveButton)
-        add(printButton)
+        add(
+            getOrdersButton,
+            newOrder,
+            geoCodeButton,
+            buildRouteButton,
+            saveButton,
+            printButton
+        )
     }
 
     init {
