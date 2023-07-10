@@ -66,6 +66,10 @@ dependencies {
     // feign
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 
+    // cache
+    implementation("com.github.ben-manes.caffeine:caffeine:3.0.5")
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+
     runtimeOnly("com.h2database:h2")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
