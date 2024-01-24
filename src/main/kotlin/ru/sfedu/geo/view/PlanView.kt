@@ -23,6 +23,7 @@ import com.vaadin.flow.router.HasUrlParameter
 import com.vaadin.flow.router.Route
 import org.springframework.beans.factory.annotation.Value
 import ru.sfedu.geo.model.Order
+import ru.sfedu.geo.model.Point
 import ru.sfedu.geo.service.ErpAdapter
 import ru.sfedu.geo.service.GeoService
 import ru.sfedu.geo.service.OrderService
@@ -52,7 +53,6 @@ class PlanView(
 
     private var draggedItem: Order? = null
 
-
     private val googleMap = GoogleMap(apiKey, null, null).apply {
         mapType = ROADMAP
         // center = LatLon(47.203821, 38.944089)
@@ -61,6 +61,7 @@ class PlanView(
         width = "100%"
         height = "400px"
     }
+    private val googleMapMarkers = mutableSetOf<GoogleMapMarker>()
 
     private val grid = Grid(Order::class.java, false).apply {
         // columns
@@ -173,11 +174,7 @@ class PlanView(
                 ?.let { order.point = it }
         }
         dataView.refreshAll()
-
-
-        dataView.items.forEach {
-            googleMap.addMarker(GoogleMapMarker(it.name, googleMap.center, false))
-        }
+        refreshMarkers()
     }
 
     private val buildRouteButton = Button("Построить маршрут") {
@@ -210,7 +207,28 @@ class PlanView(
         planId = UUID.fromString(parameter)
         orderService.findByPlanId(planId).toMutableList().let {
             dataView = grid.setItems(it)
+            refreshMarkers()
         }
         deliveryDate = planService.getById(planId).deliveryDate
+    }
+
+    private fun refreshMarkers() {
+        // remove old
+        googleMapMarkers.forEach(googleMap::removeMarker)
+        googleMapMarkers.clear()
+
+        // add new
+        dataView.items.forEach {
+            it.point?.toLatLon()?.run {
+                val googleMapMarker = GoogleMapMarker(it.name, this, false)
+                googleMapMarkers.add(googleMapMarker)
+                googleMap.addMarker(googleMapMarker)
+            }
+        }
+    }
+
+    private fun Point.toLatLon(): LatLon? = when {
+        lat != null && long != null -> LatLon(lat.toDouble(), long.toDouble())
+        else -> null
     }
 }
