@@ -2,6 +2,7 @@ package ru.sfedu.geo.view
 
 import com.flowingcode.vaadin.addons.googlemaps.GoogleMap
 import com.flowingcode.vaadin.addons.googlemaps.GoogleMap.MapType.ROADMAP
+import com.flowingcode.vaadin.addons.googlemaps.GoogleMapMarker
 import com.flowingcode.vaadin.addons.googlemaps.LatLon
 import com.vaadin.flow.component.Key
 import com.vaadin.flow.component.button.Button
@@ -172,6 +173,11 @@ class PlanView(
                 ?.let { order.point = it }
         }
         dataView.refreshAll()
+
+
+        dataView.items.forEach {
+            googleMap.addMarker(GoogleMapMarker(it.name, googleMap.center, false))
+        }
     }
 
     private val buildRouteButton = Button("Построить маршрут") {
