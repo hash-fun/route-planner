@@ -17,7 +17,6 @@ java {
 }
 
 val vaadinVersion = "24.1.0"
-val karibuDslVersion = "2.0.1"
 
 configurations {
     compileOnly {
@@ -56,6 +55,7 @@ dependencies {
     // vaadin
     implementation("com.vaadin:vaadin-spring-boot-starter")
     implementation("org.vaadin.addons.componentfactory:vcf-pdf-viewer:2.7.2")
+    implementation("com.flowingcode.vaadin.addons:google-maps:1.10.1")
 
     // jasper
     // implementation("net.sf.jasperreports:jasperreports:6.20.0")

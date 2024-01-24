@@ -1,5 +1,8 @@
 package ru.sfedu.geo.view
 
+import com.flowingcode.vaadin.addons.googlemaps.GoogleMap
+import com.flowingcode.vaadin.addons.googlemaps.GoogleMap.MapType.ROADMAP
+import com.flowingcode.vaadin.addons.googlemaps.LatLon
 import com.vaadin.flow.component.Key
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant.LUMO_ERROR
@@ -17,6 +20,7 @@ import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.router.BeforeEvent
 import com.vaadin.flow.router.HasUrlParameter
 import com.vaadin.flow.router.Route
+import org.springframework.beans.factory.annotation.Value
 import ru.sfedu.geo.model.Order
 import ru.sfedu.geo.service.ErpAdapter
 import ru.sfedu.geo.service.GeoService
@@ -34,6 +38,10 @@ class PlanView(
     private val orderService: OrderService,
     private val erpAdapter: ErpAdapter,
     private val geoService: GeoService,
+    @Value("\${app.google.api-key}")
+    private val apiKey: String,
+    @Value("\${app.home}")
+    private val appHome: String,
 ) : VerticalLayout(), HasUrlParameter<String> {
     private val log by lazyLogger()
 
@@ -42,6 +50,16 @@ class PlanView(
     private lateinit var dataView: GridListDataView<Order>
 
     private var draggedItem: Order? = null
+
+
+    private val googleMap = GoogleMap(apiKey, null, null).apply {
+        mapType = ROADMAP
+        // center = LatLon(47.203821, 38.944089)
+        val (lat, lon) = appHome.split(',').map { it.toDouble() }
+        center = LatLon(lat, lon)
+        width = "100%"
+        height = "400px"
+    }
 
     private val grid = Grid(Order::class.java, false).apply {
         // columns
@@ -111,7 +129,7 @@ class PlanView(
         val ids = dataView.items.asSequence().map(Order::id).toSet()
         val filtered = newOrders.filterNot { it.id in ids }.map { it.copy(planId = planId) }
         when {
-            filtered.isEmpty() -> Notification.show("Новых заказоа нет").apply {
+            filtered.isEmpty() -> Notification.show("Новых заказов нет").apply {
                 position = Notification.Position.BOTTOM_CENTER
             }.also {
                 log.debug("fetchOrders: no new orders fetched")
@@ -147,12 +165,6 @@ class PlanView(
         addThemeVariants(LUMO_PRIMARY, LUMO_ERROR)
     }
 
-    private val printButton = Button("Печать") {
-        ui.ifPresent {
-            it.navigate(PdfView::class.java, planId.toString())
-        }
-    }
-
     private val geoCodeButton = Button("Геокодировать заказы") {
         dataView.items.forEach { order ->
             order.address.takeIf { !it.isNullOrBlank() }
@@ -173,16 +185,17 @@ class PlanView(
             geoCodeButton,
             buildRouteButton,
             saveButton,
-            printButton
         )
     }
 
     init {
+        log.debug("app.home: {}", appHome)
         addClassName("centered-content")
         add(
+            googleMap,
             grid,
             newOrderDialog,
-            buttonBar
+            buttonBar,
         )
     }
 
