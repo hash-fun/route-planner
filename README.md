@@ -3,7 +3,15 @@
 
 ## Для сборки потребуются
 
-1) [JDK 20](https://jdk.java.net/20/) или альтернативы
+1) [JDK 21](https://jdk.java.net/21/) или альтернативы
+2) [Docker](https://www.docker.com/) (не обязательно) 
+
+## Ключи Google API
+
+для корректного отображения карт необходимо указать валидный Google API Key в [application.properties](src/main/resources/application-h2.properties)
+```properties
+app.google.api-key=AIza...
+```
 
 ## Сборка
 
@@ -17,11 +25,18 @@
 ./gradlew bootRun
 ```
 
-Допущения
-=========
+## Если собирать лень
+
+Запустите контейнер
+
+```shell
+docker run -p 8080:8080 sfedu/geo
+```
+
+## Конфигурирование
 
 1) Сервис использует H2 в режиме in-memory
-2) В файле [application-local.properties](src%2Fmain%2Fresources%2Fapplication-local.properties) вы сожете найти пример как запустить в режиме разделяемого сервера на диске
-3) При желании запустить на Postgres необходимо добавиь драйвер в [build.gradle.kts](build.gradle.kts) и указать `spring.datasource.url` в [application.properties](src%2Fmain%2Fresources%2Fapplication.properties)
+2) В файле [application-h2.properties](src/main/resources/application-h2.properties) вы сможете найти пример как запустить сервер с сохранением на диск
+3) При желании запустить на Postgres необходимо добавить драйвер в [build.gradle.kts](build.gradle.kts) и указать `spring.datasource.url` в application.properties.
 
 
