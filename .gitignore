@@ -39,3 +39,5 @@ out/
 ### Vaadin
 
 /frontend
+
+*-local.*
