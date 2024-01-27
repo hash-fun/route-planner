@@ -1,4 +1,4 @@
-rootProject.name = "geo"
+rootProject.name = "route-planner"
 
 pluginManagement {
     repositories {
