@@ -121,7 +121,7 @@ class PlanListView(
     }
 
     private val dataView: GridListDataView<Plan> =
-        grid.setItems(planService.findRecent())
+        grid.setItems(planService.findRecent().toMutableList())
 
     init {
         add(

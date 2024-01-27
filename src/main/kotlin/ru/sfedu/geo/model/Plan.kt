@@ -16,8 +16,6 @@ data class Plan(
     @field:Column(nullable = false, unique = true)
     val deliveryDate: LocalDate = LocalDate.now(),
 
-    // @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL], orphanRemoval = true)
-    // @JoinColumn(name = "plan_id", nullable = false, insertable = false, updatable = false)
-    // @Fetch(FetchMode.SUBSELECT)
-    // val orders: List<Order> = mutableListOf(),
+    @field:Column(nullable = false)
+    var routed: Boolean = false,
 )

@@ -14,7 +14,7 @@ class GeoServiceTest : AbstractComponentTest() {
     @Test
     fun `it should return expected coords`() {
         val actual = geoService.geocode("Некрасовский переулок, 44, Таганрог, Ростовская область")!!
-        assertEquals(38.0f, actual.lat!!, 1.0f)
-        assertEquals(47.0f, actual.long!!, 1.0f)
+        assertEquals(38.0, actual.lat!!, 1.0)
+        assertEquals(47.0, actual.long!!, 1.0)
     }
 }
