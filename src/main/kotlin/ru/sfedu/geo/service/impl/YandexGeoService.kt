@@ -23,7 +23,7 @@ class YandexGeoService(
         val value = JsonPath.parse(json).read<List<String>>(JSON_PATH)?.firstOrNull()
         log.debug("value: {}", value)
         val arr = value.toString().split(' ')
-        Point(arr[1].toFloat(), arr[0].toFloat())
+        Point(arr[1].toDouble(), arr[0].toDouble())
     }.onFailure {
         log.error("error: ", it)
     }.getOrNull()

@@ -56,6 +56,7 @@ dependencies {
     implementation("com.vaadin:vaadin-spring-boot-starter")
     implementation("org.vaadin.addons.componentfactory:vcf-pdf-viewer:2.7.2")
     implementation("com.flowingcode.vaadin.addons:google-maps:1.10.1")
+    implementation("com.graphhopper:jsprit-core:1.7.2")
 
     // jasper
     // implementation("net.sf.jasperreports:jasperreports:6.20.0")

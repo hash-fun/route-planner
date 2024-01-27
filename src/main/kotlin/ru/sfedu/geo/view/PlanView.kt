@@ -28,18 +28,21 @@ import ru.sfedu.geo.service.ErpAdapter
 import ru.sfedu.geo.service.GeoService
 import ru.sfedu.geo.service.OrderService
 import ru.sfedu.geo.service.PlanService
+import ru.sfedu.geo.service.TspSolver
 import ru.sfedu.geo.util.lazyLogger
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.streams.asSequence
 
 
+@Suppress("LongParameterList")
 @Route(value = "plan")
 class PlanView(
     private val planService: PlanService,
     private val orderService: OrderService,
     private val erpAdapter: ErpAdapter,
     private val geoService: GeoService,
+    private val tspSolver: TspSolver,
     @Value("\${app.google.api-key}")
     private val apiKey: String,
     @Value("\${app.home}")
@@ -56,11 +59,12 @@ class PlanView(
     private val googleMap = GoogleMap(apiKey, null, null).apply {
         mapType = ROADMAP
         // center = LatLon(47.203821, 38.944089)
-        val (lat, lon) = appHome.split(',').map { it.toDouble() }
+        val (lat, lon) = appHome.toLatLon()
         center = LatLon(lat, lon)
         width = "100%"
         height = "400px"
     }
+
     private val googleMapMarkers = mutableSetOf<GoogleMapMarker>()
 
     private val grid = Grid(Order::class.java, false).apply {
@@ -178,7 +182,18 @@ class PlanView(
     }
 
     private val buildRouteButton = Button("Построить маршрут") {
-        Notification.show("Функционал будет реализован в версии 1.3")
+        val home = appHome.toLatLon().let { (lat, lon) -> Point(lat, lon) }
+        val orders = dataView.items.toList()
+        when (val solution = tspSolver.solve(home, orders)) {
+            null -> Notification.show("Маршрут не найден")
+            else -> {
+                solution.forEachIndexed { i, order ->
+                    order.number = i.inc()
+                }
+                dataView.removeItems(dataView.items.toList())
+                dataView.addItems(solution)
+            }
+        }
     }
 
     private val buttonBar = HorizontalLayout().apply {
@@ -228,7 +243,12 @@ class PlanView(
     }
 
     private fun Point.toLatLon(): LatLon? = when {
-        lat != null && long != null -> LatLon(lat.toDouble(), long.toDouble())
+        lat != null && long != null -> LatLon(lat, long)
         else -> null
+    }
+
+    companion object {
+        private fun String.toLatLon() = split(',').map { it.toDouble() }
+
     }
 }
