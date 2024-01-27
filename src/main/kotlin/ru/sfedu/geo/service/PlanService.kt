@@ -56,4 +56,8 @@ class PlanService(
         }.orElseThrow {
             EntityNotFoundException("not found")
         }
+
+    fun save(plan: Plan) {
+        planRepository.save(plan)
+    }
 }

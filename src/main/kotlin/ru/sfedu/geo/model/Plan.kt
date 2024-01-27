@@ -15,4 +15,7 @@ data class Plan(
 
     @field:Column(nullable = false, unique = true)
     val deliveryDate: LocalDate = LocalDate.now(),
+
+    @field:Column(nullable = false)
+    var routed: Boolean = false,
 )
