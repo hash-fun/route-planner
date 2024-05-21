@@ -12,4 +12,3 @@ insert into plan(id, delivery_date, routed)
 values (random_uuid(), now() + 8, false);
 insert into plan(id, delivery_date, routed)
 values (random_uuid(), now() + 10, false);
-
