@@ -15,15 +15,15 @@ import org.springframework.stereotype.Component
 import ru.sfedu.geo.model.Order
 import ru.sfedu.geo.model.Point
 import ru.sfedu.geo.service.PathFinder
-import ru.sfedu.geo.service.TspSolver
+import ru.sfedu.geo.service.VrpSolver
 import ru.sfedu.geo.util.lazyLogger
 import java.io.PrintWriter
 import java.io.StringWriter
 
 @Component
-class TspSolverImpl(
+class CvrpSolverImpl(
     private val pathFinder: PathFinder
-) : TspSolver {
+) : VrpSolver {
 
     private val log by lazyLogger()
 
@@ -35,8 +35,6 @@ class TspSolverImpl(
             val vehicle = VehicleImpl.Builder.newInstance("Type A")
                 .setStartLocation(Location.newInstance(0))
                 .setType(vehicleType)
-                // .setEarliestStart(0.0)
-                // .setLatestArrival(24.0)
                 .build()
 
             val jobs = orders.mapIndexed { i, order ->

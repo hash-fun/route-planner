@@ -31,7 +31,7 @@ import ru.sfedu.geo.service.ErpAdapter
 import ru.sfedu.geo.service.GeoService
 import ru.sfedu.geo.service.OrderService
 import ru.sfedu.geo.service.PlanService
-import ru.sfedu.geo.service.TspSolver
+import ru.sfedu.geo.service.VrpSolver
 import ru.sfedu.geo.util.lazyLogger
 import java.time.LocalDate
 import java.util.UUID
@@ -45,7 +45,7 @@ class PlanView(
     private val orderService: OrderService,
     private val erpAdapter: ErpAdapter,
     private val geoService: GeoService,
-    private val tspSolver: TspSolver,
+    private val vrpSolver: VrpSolver,
     @Value("\${app.google.api-key}")
     private val apiKey: String,
     @Value("\${app.home}")
@@ -194,7 +194,7 @@ class PlanView(
         // route
         val home = appHome.toLatLon().let { (lat, lon) -> Point(lat, lon) }
         val orders = dataView.items.toList()
-        when (val solution = tspSolver.solve(home, orders)) {
+        when (val solution = vrpSolver.solve(home, orders)) {
             null -> {
                 plan.routed = false
                 Notification.show("Маршрут не найден")
