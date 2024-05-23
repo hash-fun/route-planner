@@ -1,0 +1,280 @@
+openapi: 3.1.0
+info:
+  title: Logistics API
+  version: v1
+  contact:
+    email: malevannyy@sfedu.ru
+  license:
+    identifier: MIT
+    name: MIT
+servers:
+  - url: http://localhost:8080
+    description: Logistics Server
+tags:
+  - name: plan
+    description: Логистический план
+paths:
+  /api/v1/plan:
+    get:
+      tags:
+        - plan
+      summary: Получить список планов
+      operationId: getPlans
+      description: |
+        Получить список планов
+      responses:
+        200:
+          description: Операция выполнена успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Plans'
+        400:
+          description: BAD_REQUEST
+        401:
+          description: UNAUTHORIZED
+        500:
+          description: INTERNAL_ERROR
+  /api/v1/plan/{id}:
+    get:
+      tags:
+        - plan
+      summary: Получить план
+      operationId: getPlans
+      description: |
+        Получить план по идентификатору
+      parameters:
+        - in: path
+          name: id
+          description: Идентификатор
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 364d27d0-fdd5-4a3c-a1b4-1440cac201b0
+      responses:
+        200:
+          description: Операция выполнена успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Plans'
+        400:
+          description: BAD_REQUEST
+        401:
+          description: UNAUTHORIZED
+        500:
+          description: INTERNAL_ERROR
+
+components:
+  schemas:
+    Plans:
+      type: array
+      items:
+        type: object
+        $ref: '#/components/schemas/PlanBrief'
+    PlanBrief:
+      type: object
+      required:
+        - id
+        - deliveryDate
+        - routed
+        - totalDistance
+      properties:
+        id:
+          description: Идентификатор
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        deliveryDate:
+          description: Дата плана
+          type: string
+          format: date
+          example: '2024-05-24'
+        routed:
+          description: Маршрутизирован
+          type: boolean
+        totalDistance:
+          description: Общая дистанция пути
+          type: number
+          format: double
+          example: 777.70
+    Plan:
+      type: object
+      required:
+        - id
+        - deliveryDate
+        - routed
+        - vehicles
+      properties:
+        id:
+          description: Идентификатор
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        deliveryDate:
+          description: Дата плана
+          type: string
+          format: date
+          example: '2024-05-24'
+        routed:
+          description: Маршрутизирован
+          type: boolean
+        vehicles:
+          description: Транспорт
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/Vehicle'
+        routes:
+          description: Маршруты
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/Route'
+    Vehicle:
+      type: object
+      description: Транспортное средство
+      required:
+        - id
+        - name
+        - containers
+      properties:
+        id:
+          description: Идентификатор
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          description: Наименование
+          type: string
+          example: Hyundai HD-120
+        containers:
+          description: Транспортные контейнеры
+          type: array
+          $ref: '#/components/schemas/Container'
+    Container:
+      type: object
+      description: Транспортный контейнер
+      required:
+        - id
+        - positions
+      properties:
+        id:
+          description: Идентификатор
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        positions:
+          description: Позиции погрузки
+          type: array
+          $ref: '#/components/schemas/Position'
+    Position:
+      type: object
+      description: Позиция
+      required:
+        - id
+        - number
+        - orderItem
+      properties:
+        id:
+          description: Идентификатор
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        number:
+          description: Номер позиции в контейнере
+          type: integer
+        orderItem:
+          description: Позиция заказа
+          type: object
+          $ref: '#/components/schemas/Reference'
+    Reference:
+      type: object
+      description: Ссылка на идентифицируемую сущность
+      required:
+        - id
+      properties:
+        id:
+          description: Идентификатор
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+    Route:
+      type: object
+      description: Маршрут ТС
+      required:
+        - id
+        - name
+        - departure
+        - arrival
+        - points
+      properties:
+        id:
+          description: Идентификатор
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          description: Наименование
+          type: string
+          example: Кронштадт/Котлин
+        departure:
+          description: Время выбытия плановое
+          type: string
+          format: datetime
+          example: '2024-05-24T10:10:00+03:00'
+        arrival:
+          description: Время прибытия плановое
+          type: string
+          format: datetime
+          example: '2024-05-24T10:10:00+03:00'
+        routePoints:
+          description: Маршрутные точки
+          type: array
+          $ref: '#/components/schemas/RoutePoint'
+    RoutePoint:
+      type: object
+      description: Маршрутная точка
+      required:
+        - id
+        - address
+        - location
+        - orders
+      properties:
+        id:
+          description: Идентификатор
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        address:
+          description: Адрес
+          type: string
+          example: СПБ, Дворцовая пл., 1
+        location:
+          description: Координаты
+          type: object
+          $ref: '#/components/schemas/Location'
+        orders:
+          description: Заказы
+          type: array
+          $ref: '#/components/schemas/Reference'
+    Location:
+      type: object
+      description: Геодезические координаты
+      required:
+        - lat
+        - lon
+      properties:
+        lat:
+          description: Широта
+          type: number
+          format: double
+          example: 59.943533
+        lon:
+          description: Долгота
+          type: number
+          format: double
+          example: 30.308434

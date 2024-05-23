@@ -1,0 +1,132 @@
+openapi: 3.1.0
+info:
+  title: Orders API
+  version: v1
+  contact:
+    email: malevannyy@sfedu.ru
+  license:
+    identifier: MIT
+    name: MIT
+servers:
+  - url: http://localhost:9999
+    description: Orders Server
+tags:
+  - name: orders
+    description: Заказы
+paths:
+  /api/v1/orders:
+    get:
+      tags:
+        - orders
+      summary: Получить заказы
+      operationId: getOrders
+      description: |
+        Получить заказы на указанную дату доставки
+      parameters:
+        - in: query
+          name: deliveryDate
+          description: Дата доставки
+          required: true
+          schema:
+            type: string
+            format: date
+            example: '2024-05-24'
+        - in: query
+          name: apiKey
+          description: API Ключ
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 364d27d0-fdd5-4a3c-a1b4-1440cac201b0
+      responses:
+        200:
+          description: Операция выполнена успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Orders'
+        400:
+          description: BAD_REQUEST
+        401:
+          description: UNAUTHORIZED
+        500:
+          description: INTERNAL_ERROR
+components:
+  schemas:
+    Orders:
+      type: array
+      items:
+        type: object
+        $ref: '#/components/schemas/Order'
+    Order:
+      type: object
+      required:
+        - id
+        - name
+        - deliveryDate
+        - address
+        - items
+      properties:
+        id:
+          description: Идентификатор
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          description: Наименование
+          type: string
+          example: 123
+        deliveryDate:
+          description: Дата доставки
+          type: string
+          format: date
+          example: '2024-05-24'
+        address:
+          description: Адрес доставки
+          type: string
+          example: 'СПб, Дворцовая площадь, 1'
+        weight:
+          description: Вес заказа
+          type: number
+          example: 3.14
+        items:
+          type: object
+          $ref: '#/components/schemas/OrderItem'
+    OrderItem:
+      type: object
+      description: Позиция заказа
+      required:
+        - id
+        - name
+        - height
+        - width
+        - thickness
+        - weight
+      properties:
+        id:
+          description: Идентификатор
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          description: Наименование
+          type: string
+          example: Изделие 1
+        height:
+          description: Высота
+          type: integer
+          example: 1024
+        width:
+          description: Ширина
+          type: integer
+          example: 1024
+        thickness:
+          description: Толщина
+          type: integer
+          example: 128
+        weight:
+          description: Вес
+          type: integer
+          example: 128
